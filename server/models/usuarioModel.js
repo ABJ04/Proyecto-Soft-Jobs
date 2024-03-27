@@ -11,7 +11,7 @@ const createUserModel = async ({ email, password, rol, lenguage }) => {
     return res.rows[0];
 };
 
-const loginEmailUser = async ({ email }) => {
+const loginEmailUser = async ({ email, password }) => {
     try {
         const SQLquery = {
             text: "SELECT * FROM usuarios WHERE email = $1",
@@ -23,11 +23,18 @@ const loginEmailUser = async ({ email }) => {
             throw new Error("El usuario no fue encontrado en la base de datos");
         }
 
-        return res.rows[0];
+        const user = res.rows[0];
+        const isPasswordValid = bcrypt.compareSync(password, user.password);
+        if (!isPasswordValid) {
+            throw new Error("Contraseña incorrecta");
+        }
+
+        return user;
     } catch (error) {
         console.error("Error al buscar el usuario en la base de datos:", error.message);
         throw error;
     }
 };
+
 
 module.exports = { createUserModel, loginEmailUser };

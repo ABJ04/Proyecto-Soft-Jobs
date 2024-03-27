@@ -1,10 +1,8 @@
-// En tu archivo principal de la aplicación, por ejemplo, app.js o index.js
-
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const userRouter = require('./routes/userRouter.js');
-const loginRoutes = require('./routes/loginRutes.js'); // Asegúrate de importar el archivo correcto
+const loginRoutes = require('./routes/loginRutes.js');
 const dotenv = require('dotenv');
 
 dotenv.config();
@@ -20,9 +18,9 @@ app.use(morgan('combined'));
 app.use(express.json());
 app.use(cors());
 
-// Monta los enrutadores
+
 app.use('/usuarios', userRouter);
-app.use('/usuarios', loginRoutes); // Asegúrate de montar el enrutador en /usuarios
+app.use('/usuarios', loginRoutes);
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

@@ -24,19 +24,13 @@ const sendErrorResponse = async (res, errorCode) => {
 
 const loginUser = async (req, res) => {
     console.log("Iniciando proceso de autenticación de usuario...");
-    const { user } = req.body;
+    const { email, password } = req.body.user;
     try {
-        const findUser = await loginEmailUser(user.email);
+        const findUser = await loginEmailUser({ email, password });
         if (!findUser) {
             console.log("Usuario no encontrado en la base de datos.");
             return sendErrorResponse(res, 'auth_01');
         }
-        const isPasswordValid = bcrypt.compareSync(user.password, findUser.password);
-        if (!isPasswordValid) {
-            console.log("Contraseña incorrecta.");
-            return sendErrorResponse(res, 'auth_02');
-        }
-        const { email } = findUser;
         const token = await createToken(email);
         console.log("Token creado para el usuario:", email);
         res.status(200).json({
@@ -44,13 +38,11 @@ const loginUser = async (req, res) => {
             code: 200,
             token
         });
-    
     } catch (error) {
-
         console.error('Error al autenticar al usuario:', error);
         sendErrorResponse(res, 'server_error');
     }
-    
 };
+
 
 module.exports = { loginUser, sendErrorResponse };
